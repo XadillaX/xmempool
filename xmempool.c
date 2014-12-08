@@ -17,11 +17,13 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "xmempool.h"
 
-#define ALLOC_BLOCK_NODE_COUNT 1024
-xmem_pool_block* _free_block_ptr = 0;
-xmem_pool_block* _free_block_ptr_end = 0;
+#define ALLOC_BLOCK_NODE_COUNT  1024
+#define MIN_ALLOC_LENGTH        1024
+xmem_pool_block*    _free_block_ptr     = 0;
+xmem_pool_block*    _free_block_ptr_end = 0;
 
 void _alloc_block_nodes()
 {
@@ -110,5 +112,109 @@ void _recover_block_node(xmem_pool_block* node)
     {
         _free_block_ptr = _free_block_ptr_end = node;
     }
+}
+
+xmem_pool_handle _create_pool(unsigned int block_size,
+        unsigned int block_count)
+{
+    static unsigned int _pool_size  = sizeof(xmem_pool);
+    xmem_pool*          pool        = (xmem_pool*)malloc(_pool_size);
+    void*               space       = malloc(block_count * block_size);
+
+    // can't malloc more space
+    if(!pool) return (void*)0;
+    if(!space)
+    {
+        free(pool);
+        return (void*)0;
+    }
+
+    // set the pool space's start and end
+    pool->start         = space;
+    pool->end           = space + (block_count * block_size);
+
+    pool->block_size    = block_size;
+    pool->block_count   = block_count;
+    pool->next          = 0;
+
+    // create free nodes!
+    xmem_pool_block* start_block    = 0;
+    xmem_pool_block* end_block      = 0;
+    for(; space < pool->end; space += block_size)
+    {
+        xmem_pool_block* wrapper = _get_next_block_node();
+        if(!start_block)
+        {
+            start_block = wrapper; 
+        }
+
+        // if we can't create any more wrapper,
+        // free `pool`, `space`,
+        // and recover all pool blocks genereated before
+        if(!wrapper)
+        {
+            free(pool);
+            free(space);
+            while(start_block)
+            {
+                xmem_pool_block* next = start_block->next;
+                _recover_block_node(start_block);
+                start_block = next;
+            }
+            return 0;
+        }
+
+        wrapper->block_size = block_size;
+        wrapper->start = space;
+        wrapper->next = 0;
+
+        // concat wrapper to the tail of block list
+        if(end_block) end_block->next = wrapper;
+        end_block = wrapper;
+    }
+
+    pool->free_blocks = start_block;
+
+    return (void*)pool;
+}
+
+xmem_pool_handle create_pool(unsigned int block_size)
+{
+    return _create_pool(block_size, MIN_ALLOC_LENGTH);
+}
+
+void* xmem_alloc(xmem_pool_handle handle)
+{
+    xmem_pool* pool = (xmem_pool*)handle;
+
+    // find a pool that has free node
+    while(!pool->free_blocks && pool->next != 0)
+    {
+        pool = pool->next;
+    }
+
+    // if no more space, we create a new pool
+    if(!pool->free_blocks && pool->next == 0)
+    {
+        xmem_pool* next_pool    = (xmem_pool*)_create_pool(pool->block_size, pool->block_count * 2);
+        if(!next_pool)
+        {
+            return 0;
+        }
+
+        pool->next              = next_pool;
+        pool                    = next_pool;
+    }
+
+    // get the first free space
+    xmem_pool_block* block      = pool->free_blocks;
+    pool->free_blocks           = block->next;
+    void* space                 = block->start;
+
+    // initialize space data & recover block node
+    memset(space, 0, block->block_size);
+    _recover_block_node(block);
+
+    return space;
 }
 

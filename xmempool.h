@@ -27,9 +27,16 @@ typedef struct xmem_pool_block {
 
 typedef struct xmem_pool {
     unsigned int            block_size;
+    unsigned int            block_count;
+
     void*                   start;
     void*                   end;
+
+    struct xmem_pool_block* free_blocks;
+    struct xmem_pool*       next;
 } xmem_pool;
+
+typedef void* xmem_pool_handle;
 
 #endif
 
