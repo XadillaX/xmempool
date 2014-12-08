@@ -33,6 +33,7 @@ typedef struct xmem_pool {
     void*                   end;
 
     struct xmem_pool_block* free_blocks;
+    struct xmem_pool_block* free_blocks_tail;
     struct xmem_pool*       next;
 } xmem_pool;
 

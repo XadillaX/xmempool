@@ -142,7 +142,7 @@ xmem_pool_handle _create_pool(unsigned int block_size,
     xmem_pool_block* end_block      = 0;
     for(; space < pool->end; space += block_size)
     {
-        xmem_pool_block* wrapper = _get_next_block_node();
+        xmem_pool_block* wrapper    = _get_next_block_node();
         if(!start_block)
         {
             start_block = wrapper; 
@@ -165,15 +165,16 @@ xmem_pool_handle _create_pool(unsigned int block_size,
         }
 
         wrapper->block_size = block_size;
-        wrapper->start = space;
-        wrapper->next = 0;
+        wrapper->start      = space;
+        wrapper->next       = 0;
 
         // concat wrapper to the tail of block list
         if(end_block) end_block->next = wrapper;
         end_block = wrapper;
     }
 
-    pool->free_blocks = start_block;
+    pool->free_blocks       = start_block;
+    pool->free_blocks_tail  = end_block;
 
     return (void*)pool;
 }
@@ -211,10 +212,53 @@ void* xmem_alloc(xmem_pool_handle handle)
     pool->free_blocks           = block->next;
     void* space                 = block->start;
 
+    if(!pool->free_blocks) pool->free_blocks_tail = 0;
+
     // initialize space data & recover block node
     memset(space, 0, block->block_size);
     _recover_block_node(block);
 
     return space;
+}
+
+int xmem_free(xmem_pool_handle handle, void* pointer)
+{
+    xmem_pool* pool = (xmem_pool*)handle;
+
+    // find the fit handler
+    while(pool && (pool->start > pointer || pool->end <= pointer))
+    {
+        pool = pool->next;
+    }
+
+    // if this pointer not belongs to this pool
+    if(!pool || (pool->start > pointer || pool->end <= pointer))
+    {
+        return 0;
+    }
+
+    // get a block.
+    // if no block, return false.
+    xmem_pool_block* block  = _get_next_block_node();
+    if(!block)
+    {
+        return 0;
+    }
+
+    // create a new block to the free list.
+    block->block_size       = pool->block_size;
+    block->start            = pointer;
+    block->next             = 0;
+
+    if(!pool->free_blocks && !pool->free_blocks_tail)
+    {
+        pool->free_blocks   = pool->free_blocks_tail = block;
+        return 1;
+    }
+
+    ((xmem_pool_block*)pool->free_blocks_tail)->next = block;
+    pool->free_blocks       = block;
+
+    return 1;
 }
 
