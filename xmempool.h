@@ -18,26 +18,12 @@
 #ifndef __XMEMPOOL_H__
 #define __XMEMPOOL_H__
 
-typedef struct xmem_pool_block {
-    void*                   start;
-    unsigned int            block_size;
-    struct xmem_pool_block* next;
-    unsigned char           is_block_start;
-} xmem_pool_block;
+typedef void*               xmem_pool_handle;
 
-typedef struct xmem_pool {
-    unsigned int            block_size;
-    unsigned int            block_count;
-
-    void*                   start;
-    void*                   end;
-
-    struct xmem_pool_block* free_blocks;
-    struct xmem_pool_block* free_blocks_tail;
-    struct xmem_pool*       next;
-} xmem_pool;
-
-typedef void* xmem_pool_handle;
+// 3 APIs so far
+extern xmem_pool_handle     xmem_create_pool(unsigned int block_size);
+extern void*                xmem_alloc(xmem_pool_handle handle);
+extern int                  xmem_free(xmem_pool_handle handle, void* pointer);
 
 #endif
 

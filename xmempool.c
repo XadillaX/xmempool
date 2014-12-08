@@ -20,6 +20,25 @@
 #include <string.h>
 #include "xmempool.h"
 
+typedef struct xmem_pool_block {
+    void*                   start;
+    unsigned int            block_size;
+    struct xmem_pool_block* next;
+    unsigned char           is_block_start;
+} xmem_pool_block;
+
+typedef struct xmem_pool {
+    unsigned int            block_size;
+    unsigned int            block_count;
+
+    void*                   start;
+    void*                   end;
+
+    struct xmem_pool_block* free_blocks;
+    struct xmem_pool_block* free_blocks_tail;
+    struct xmem_pool*       next;
+} xmem_pool;
+
 #define ALLOC_BLOCK_NODE_COUNT  1024
 #define MIN_ALLOC_LENGTH        1024
 xmem_pool_block*    _free_block_ptr     = 0;
@@ -179,7 +198,7 @@ xmem_pool_handle _create_pool(unsigned int block_size,
     return (void*)pool;
 }
 
-xmem_pool_handle create_pool(unsigned int block_size)
+xmem_pool_handle xmem_create_pool(unsigned int block_size)
 {
     return _create_pool(block_size, MIN_ALLOC_LENGTH);
 }
