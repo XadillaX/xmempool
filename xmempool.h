@@ -20,7 +20,7 @@
 
 typedef void*               xmem_pool_handle;
 
-// 3 APIs so far
+// 5 APIs so far
 extern xmem_pool_handle     xmem_create_pool(unsigned int block_size);
 extern void                 xmem_destroy_pool(xmem_pool_handle pool);
 extern void*                xmem_alloc(xmem_pool_handle handle);
