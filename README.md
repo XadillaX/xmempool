@@ -68,3 +68,27 @@ int result = xmem_free(pool1, my_stct);
 if(!result) printf("Cannot be recovered.\n");
 ```
 
+### Destroy the Whole Pool
+
+```c
+void xmem_destroy_pool(xmem_pool_handle pool);
+```
+
+> **Caution!** This function will destroy the whole pool, `free`ing all your memory allocated by that pool, even if you haven't `xmem_free` yet.
+
+```c
+xmem_destroy_pool(pool1);
+xmem_destroy_pool(pool2);
+```
+
+### More
+
+You can refer to [xmempool.h](xmempool.h) for any more functions.
+
+## Contribute
+
+You're welcome to pull requests!
+
+「雖然我覺得不怎麼可能有人會關注我」
+
+
