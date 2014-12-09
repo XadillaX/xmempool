@@ -31,4 +31,6 @@
 *.pyc
 *.swp
 xmempool-test
+xmempool-test-d
+*.d
 
