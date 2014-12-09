@@ -37,5 +37,5 @@ test.o: test.c
 .PHONY: all test clean
 
 clean:
-	$(RM) -rf *.o $(DYLIBNAME) $(STLIBNAME) $(TESTS) output/*
+	$(RM) -rf *.o $(DYLIBNAME) $(STLIBNAME) $(TESTS)
 
