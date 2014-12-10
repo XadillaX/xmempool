@@ -18,6 +18,10 @@
 #ifndef __XMEMPOOL_H__
 #define __XMEMPOOL_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void*               xmem_pool_handle;
 
 // 5 APIs so far
@@ -26,6 +30,10 @@ extern void                 xmem_destroy_pool(xmem_pool_handle pool);
 extern void*                xmem_alloc(xmem_pool_handle handle);
 extern int                  xmem_free(xmem_pool_handle handle, void* pointer);
 extern void                 xmem_print_info(xmem_pool_handle pool);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
