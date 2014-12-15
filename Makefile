@@ -2,6 +2,7 @@ OBJ = xmempool.o
 OBJ_D = xmempool.d
 TESTS = xmempool-test
 LIBNAME = xmempool
+PERF = perf
 
 CC = gcc
 OPTIMIZATION ?= -O2
@@ -45,17 +46,26 @@ test_d: test.o $(STLIBDNAME)
 test: test.o $(STLIBNAME)
 	$(CC) -o $(TESTS) $(REAL_CFLAGS) $< -I. $(STLIBNAME)
 
+perf_xmem: perf/xmem.o $(STLIBNAME)
+	$(CC) -o $(PERF)_xmem $(REAL_CFLAGS) $< -I. $(STLIBNAME)
+perf_alloc: perf/alloc.o $(STLIBNAME)
+	$(CC) -o $(PERF)_alloc $(REAL_CFLAGS) $< -I. $(STLIBNAME)
+
+
 xmempool.d: xmempool.c
 
 xmempool.o: xmempool.c
 
 test.o: test.c
 
+perf/xmem.o: perf/xmem.c perf/common.h
+perf/alloc.o: perf/alloc.c perf/common.h
+
 %.d: %.c
 	$(CC) -c $(REAL_CFLAGS) -D XMEM_DBG $< -o $@
 
 %.o: %.c
-	$(CC) -c $(REAL_CFLAGS) $<
+	$(CC) -c $(REAL_CFLAGS) $< -o $@
 
 .PHONY: all test clean
 
