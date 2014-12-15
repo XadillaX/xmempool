@@ -87,6 +87,42 @@ xmem_destroy_pool(pool2);
 
 You can refer to [xmempool.h](xmempool.h) for any more functions.
 
+## Performance
+
+```
+$ npm install
+```
+
+Install dependencies via command above and then type follow command:
+
+```
+$ node perf.js
+```
+
+Here's one of my report:
+
+```
+Performance of "./perf_xmem"
+  Test cases: 50
+  Times of each case: 1000000
+  Average of alloc in one case: 105677100.62 CPU cycles
+  Average of free in one case: 53544096.32 CPU cycles
+  Avarage of total in one case: 173817790.56 CPU cycles
+
+Performance of "./perf_alloc"
+  Test cases: 50
+  Times of each case: 1000000
+  Average of alloc in one case: 128012265.22 CPU cycles
+  Average of free in one case: 239497417.16 CPU cycles
+  Avarage of total in one case: 367509748.82 CPU cycles
+```
+
+> This report was ran on my ***MacBook Air (11-inch, Mid 2013)***.
+>
+> + CPU: 1.3GHz Intel Core i5
+> + Memo: 4GB 1600 MHz DDR3
+> + System: OS X Yosemite 10.10.2
+
 ## Contribute
 
 You're welcome to pull requests!
