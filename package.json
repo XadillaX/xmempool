@@ -1,0 +1,27 @@
+{
+  "name": "xmempool-perf",
+  "version": "1.0.0",
+  "description": "perf toolkit for xmempool.",
+  "main": "perf.js",
+  "dependencies": {
+    "sync-runner": "^0.0.5-fixwin"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/XadillaX/xmempool.git"
+  },
+  "keywords": [
+    "perf",
+    "xmempool"
+  ],
+  "author": "XadillaX",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/XadillaX/xmempool/issues"
+  },
+  "homepage": "https://github.com/XadillaX/xmempool"
+}
