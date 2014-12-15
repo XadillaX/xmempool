@@ -33,4 +33,8 @@
 xmempool-test
 xmempool-test-d
 *.d
+node_modules
+
+perf_alloc
+perf_xmem
 
