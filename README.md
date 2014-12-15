@@ -2,6 +2,8 @@
 
 A memory pool implemented by C.
 
+> Sharing a same pool in multi-thread is not recommanded.
+
 ## Usage
 
 ### Create Pool
