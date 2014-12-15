@@ -89,13 +89,13 @@ You can refer to [xmempool.h](xmempool.h) for any more functions.
 
 ## Performance
 
-```
+```shell
 $ npm install
 ```
 
 Install dependencies via command above and then type follow command:
 
-```
+```shell
 $ node perf.js
 ```
 
