@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+make perf_xmem && make perf_alloc
+./perf_xmem && ./perf_alloc
+
