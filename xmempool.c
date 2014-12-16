@@ -341,16 +341,16 @@ int xmem_free(xmem_pool_handle handle, void* pointer)
 
     // get a block.
     // if no block, return false.
-    xmem_pool_block* block  = _get_next_block_node();
+    xmem_pool_block* block = _get_next_block_node();
     if(!block)
     {
         return 0;
     }
 
     // create a new block to the free list.
-    block->block_size       = pool->block_size;
-    block->start            = pointer;
-    block->next             = 0;
+    block->block_size = pool->block_size;
+    block->start      = pointer;
+    block->next       = 0;
 
     if(!pool->free_blocks && !pool->free_blocks_tail)
     {
@@ -358,8 +358,8 @@ int xmem_free(xmem_pool_handle handle, void* pointer)
         return 1;
     }
 
-    ((xmem_pool_block*)pool->free_blocks_tail)->next = block;
-    pool->free_blocks_tail = block;
+    pool->free_blocks_tail->next = block;
+    pool->free_blocks_tail       = block;
 
     return 1;
 }
