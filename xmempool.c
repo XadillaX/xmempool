@@ -292,38 +292,33 @@ void xmem_destroy_pool(xmem_pool_handle handle)
 
 void* xmem_alloc(xmem_pool_handle handle)
 {
-    xmem_pool* pool = (xmem_pool*)handle;
+    static unsigned int pool_element_size = sizeof(xmem_pool);
+    xmem_pool* pool                = (xmem_pool*)handle;
 
     // if no more space, we create a new pool
     if(!pool->free_blocks)
     {
-        // find the last pool and concat this pool into
-        // the last one.
-        xmem_pool* last_pool = pool;
-        while(last_pool->next)
-        {
-            last_pool = last_pool->next;
-        }
+        xmem_pool* new_pool = (xmem_pool*)_create_pool(pool->block_size, 
+                pool->block_count << 1);
 
-        xmem_pool* next_pool = (xmem_pool*)_create_pool(pool->block_size, 
-                last_pool->block_count << 1);
-
-        if(!next_pool)
+        if(!new_pool)
         {
             return 0;
         }
-        
-        last_pool->next        = next_pool;
+
+        xmem_pool temp_pool;
+        memcpy(&temp_pool,  pool,       pool_element_size);
+        memcpy(pool,        new_pool,   pool_element_size);
+        memcpy(new_pool,    &temp_pool, pool_element_size);
+
+        pool->next = new_pool;
 
         // ** 我太特么聪明了 **
         //
-        // add the next pool's free blocks into
-        // the first one.
-        //
         // no matter how many pools here, all free
         // blocks are managed in the first pool.
-        pool->free_blocks      = next_pool->free_blocks;
-        pool->free_blocks_tail = next_pool->free_blocks_tail;
+        //
+        // so we needn't do anything here.
     }
 
     // get the first free space
