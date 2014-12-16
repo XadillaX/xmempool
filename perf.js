@@ -54,5 +54,11 @@ exec("make perf_xmem && make perf_alloc", function(err) {
         console.log("  Avarage of total in one case: " + results[j].total + " CPU cycles");
         console.log();
     }
+
+    console.log("Effect rate: (malloc - xmempool) / malloc");
+    console.log("  Alloc:", ((results[1].alloc - results[0].alloc) / results[1].alloc * 100).toFixed(2) + "%");
+    console.log("  Free: ", ((results[1].free - results[0].free) / results[1].free * 100).toFixed(2) + "%");
+    console.log("  Total:", ((results[1].total - results[0].total) / results[1].total * 100).toFixed(2) + "%");
+    console.log();
 });
 
