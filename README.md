@@ -99,22 +99,27 @@ Install dependencies via command above and then type follow command:
 $ node perf.js
 ```
 
-Here's one of my report:
+### Test 1
 
 ```
 Performance of "./perf_xmem"
   Test cases: 50
   Times of each case: 1000000
-  Average of alloc in one case: 105677100.62 CPU cycles
-  Average of free in one case: 53544096.32 CPU cycles
-  Avarage of total in one case: 173817790.56 CPU cycles
+  Average of alloc in one case: 104286521.16 CPU cycles
+  Average of free in one case: 55591672.52 CPU cycles
+  Avarage of total in one case: 175336443.04 CPU cycles
 
 Performance of "./perf_alloc"
   Test cases: 50
   Times of each case: 1000000
-  Average of alloc in one case: 128012265.22 CPU cycles
-  Average of free in one case: 239497417.16 CPU cycles
-  Avarage of total in one case: 367509748.82 CPU cycles
+  Average of alloc in one case: 131146360.06 CPU cycles
+  Average of free in one case: 247020799.32 CPU cycles
+  Avarage of total in one case: 378167256.32 CPU cycles
+
+Effect rate: (malloc - xmempool) / malloc
+  Alloc: 20.48%
+  Free:  77.50%
+  Total: 53.64%
 ```
 
 > This report was ran on my ***MacBook Air (11-inch, Mid 2013)***.
