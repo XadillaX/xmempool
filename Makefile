@@ -70,5 +70,5 @@ perf/alloc.o: perf/alloc.c perf/common.h
 .PHONY: all test clean
 
 clean:
-	$(RM) -rf *.o *.d $(DYLIBNAME) $(STLIBDNAME) $(STLIBNAME) $(TESTS) $(TESTS)-d
+	$(RM) -rf *.o *.d $(DYLIBNAME) $(STLIBDNAME) $(STLIBNAME) $(TESTS) $(TESTS)-d perf/*.o perf_xmem perf_alloc
 
