@@ -226,7 +226,15 @@ void xmem_print_info(xmem_pool_handle _pool)
         printf("  + count: %d\n",                   pool->block_count);
         printf("  + spaces: [0x%.8X, 0x%.8X)\n",    (unsigned int)pool->start,
                                                     (unsigned int)pool->end);
-        printf("  + free blocks: %d\n",             _xmem_count_free_blocks(pool));
+
+        if(pool_id == 1)
+        {
+            printf("  + free blocks: %d\n",             _xmem_count_free_blocks(pool));
+        }
+        else
+        {
+            printf("  + free blocks: -\n");
+        }
 
         pool        = pool->next;
     }
@@ -256,15 +264,21 @@ void xmem_destroy_pool(xmem_pool_handle handle)
         // and then remove all free blocks object
         // from head to tail.
         free(pool->start);
-        xmem_pool_block* block = pool->free_blocks;
-        xmem_pool_block* next_block;
 
-        // from block head to block tail
-        while(block)
+        // all the blocks are mansged in the
+        // first pool.
+        if(pool == handle)
         {
-            next_block  = block->next;
-            _recover_block_node(block);
-            block       = next_block;
+            xmem_pool_block* block = pool->free_blocks;
+            xmem_pool_block* next_block;
+
+            // from block head to block tail
+            while(block)
+            {
+                next_block  = block->next;
+                _recover_block_node(block);
+                block       = next_block;
+            }
         }
 
         // move to next pool
@@ -278,33 +292,38 @@ void xmem_destroy_pool(xmem_pool_handle handle)
 
 void* xmem_alloc(xmem_pool_handle handle)
 {
-    static int pool_element_size = sizeof(xmem_pool);
-    xmem_pool* pool              = (xmem_pool*)handle;
-    xmem_pool* first_pool        = pool;
-
-    // find a pool that has free node
-    while(!pool->free_blocks && pool->next != 0)
-    {
-        pool = pool->next;
-    }
+    xmem_pool* pool = (xmem_pool*)handle;
 
     // if no more space, we create a new pool
-    if(!pool->free_blocks && pool->next == 0)
+    if(!pool->free_blocks)
     {
-        xmem_pool* next_pool = (xmem_pool*)_create_pool(pool->block_size, first_pool->block_count << 2);
+        // find the last pool and concat this pool into
+        // the last one.
+        xmem_pool* last_pool = pool;
+        while(last_pool->next)
+        {
+            last_pool = last_pool->next;
+        }
+
+        xmem_pool* next_pool = (xmem_pool*)_create_pool(pool->block_size, 
+                last_pool->block_count << 1);
+
         if(!next_pool)
         {
             return 0;
         }
+        
+        last_pool->next        = next_pool;
 
-        // swap new pool and first pool and then link them
-        xmem_pool temp_pool;
-        memcpy(&temp_pool,  first_pool, pool_element_size);
-        memcpy(first_pool,  next_pool,  pool_element_size);
-        memcpy(next_pool,   &temp_pool, pool_element_size);
-
-        first_pool->next    = next_pool;
-        pool                = first_pool;
+        // ** 我太特么聪明了 **
+        //
+        // add the next pool's free blocks into
+        // the first one.
+        //
+        // no matter how many pools here, all free
+        // blocks are managed in the first pool.
+        pool->free_blocks      = next_pool->free_blocks;
+        pool->free_blocks_tail = next_pool->free_blocks_tail;
     }
 
     // get the first free space
@@ -325,18 +344,6 @@ int xmem_free(xmem_pool_handle handle, void* pointer)
 {
     xmem_pool* pool = (xmem_pool*)handle;
 
-    // find the fit handler
-    while(pool && (pool->start > pointer || pool->end <= pointer))
-    {
-        pool = pool->next;
-    }
-
-    // if this pointer not belongs to this pool
-    if(!pool || (pool->start > pointer || pool->end <= pointer))
-    {
-        return 0;
-    }
-
     // get a block.
     // if no block, return false.
     xmem_pool_block* block  = _get_next_block_node();
@@ -352,7 +359,7 @@ int xmem_free(xmem_pool_handle handle, void* pointer)
 
     if(!pool->free_blocks && !pool->free_blocks_tail)
     {
-        pool->free_blocks   = pool->free_blocks_tail = block;
+        pool->free_blocks = pool->free_blocks_tail = block;
         return 1;
     }
 
