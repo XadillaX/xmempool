@@ -105,21 +105,21 @@ $ node perf.js
 Performance of "./perf_xmem"
   Test cases: 50
   Times of each case: 1000000
-  Average of alloc in one case: 104286521.16 CPU cycles
-  Average of free in one case: 55591672.52 CPU cycles
-  Avarage of total in one case: 175336443.04 CPU cycles
+  Average of alloc in one case: 88934466.62 CPU cycles
+  Average of free in one case: 34828792.76 CPU cycles
+  Avarage of total in one case: 139718323.94 CPU cycles
 
 Performance of "./perf_alloc"
   Test cases: 50
   Times of each case: 1000000
-  Average of alloc in one case: 131146360.06 CPU cycles
-  Average of free in one case: 247020799.32 CPU cycles
-  Avarage of total in one case: 378167256.32 CPU cycles
+  Average of alloc in one case: 144649249.46 CPU cycles
+  Average of free in one case: 269216562.16 CPU cycles
+  Avarage of total in one case: 413865891.36 CPU cycles
 
 Effect rate: (malloc - xmempool) / malloc
-  Alloc: 20.48%
-  Free:  77.50%
-  Total: 53.64%
+  Alloc: 38.52%
+  Free:  87.06%
+  Total: 66.24%
 ```
 
 > This report was ran on my ***MacBook Air (11-inch, Mid 2013)***.
@@ -127,6 +127,64 @@ Effect rate: (malloc - xmempool) / malloc
 > + CPU: 1.3GHz Intel Core i5
 > + Memo: 4GB 1600 MHz DDR3
 > + System: OS X Yosemite 10.10.2
+
+### Test 2
+
+```
+Performance of "./perf_xmem"
+  Test cases: 50
+  Times of each case: 1000000
+  Average of alloc in one case: 88497438.3 CPU cycles
+  Average of free in one case: 38895793.32 CPU cycles
+  Avarage of total in one case: 145739467.06 CPU cycles
+
+Performance of "./perf_alloc"
+  Test cases: 50
+  Times of each case: 1000000
+  Average of alloc in one case: 112048273.8 CPU cycles
+  Average of free in one case: 40331425.12 CPU cycles
+  Avarage of total in one case: 152379754.92 CPU cycles
+
+Effect rate: (malloc - xmempool) / malloc
+  Alloc: 21.02%
+  Free:  3.56%
+  Total: 4.36%
+```
+
+> This report was ran on my work computer which is under ***Deepin***.
+>
+> + CPU: Dual Intel(R) Pentium(R) CPU G620 @ 2.60GHz
+> + Memo: 4GB 1600 MHz DDR3 x 2
+> + System: Deepin 2014 (3.13.0-30-generic)
+
+### Test 3
+
+```
+Performance of "./perf_xmem"
+  Test cases: 50
+  Times of each case: 1000000
+  Average of alloc in one case: 192807375.4 CPU cycles
+  Average of free in one case: 68994110.58 CPU cycles
+  Avarage of total in one case: 318962417.64 CPU cycles
+
+Performance of "./perf_alloc"
+  Test cases: 50
+  Times of each case: 1000000
+  Average of alloc in one case: 197417483.18 CPU cycles
+  Average of free in one case: 59714845.4 CPU cycles
+  Avarage of total in one case: 257132389.86 CPU cycles
+
+Effect rate: (malloc - xmempool) / malloc
+  Alloc: 2.34%
+  Free:  -15.54%
+  Total: -24.05%
+```
+
+> This report was ran on my own VPS which is under ***Ubuntu***.
+>
+> + CPU: Dual Intel(R) Xeon(R) CPU E5-2620 0 @ 2.00GHz
+> + Memo: 1G
+> + System: Ubuntu 12.04.2 LTS (3.5.0-23-generic)
 
 ## Contribute
 
