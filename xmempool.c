@@ -39,8 +39,8 @@ typedef struct xmem_pool {
     struct xmem_pool*       next;
 } xmem_pool;
 
-#define ALLOC_BLOCK_NODE_COUNT  1024
-#define MIN_ALLOC_LENGTH        1024
+#define ALLOC_BLOCK_NODE_COUNT  (1024)
+#define MIN_ALLOC_LENGTH        (1024)
 xmem_pool_block*    _free_block_ptr     = 0;
 xmem_pool_block*    _free_block_ptr_end = 0;
 
@@ -278,7 +278,9 @@ void xmem_destroy_pool(xmem_pool_handle handle)
 
 void* xmem_alloc(xmem_pool_handle handle)
 {
-    xmem_pool* pool = (xmem_pool*)handle;
+    static int pool_element_size = sizeof(xmem_pool);
+    xmem_pool* pool              = (xmem_pool*)handle;
+    xmem_pool* first_pool        = pool;
 
     // find a pool that has free node
     while(!pool->free_blocks && pool->next != 0)
@@ -289,14 +291,20 @@ void* xmem_alloc(xmem_pool_handle handle)
     // if no more space, we create a new pool
     if(!pool->free_blocks && pool->next == 0)
     {
-        xmem_pool* next_pool    = (xmem_pool*)_create_pool(pool->block_size, pool->block_count * 2);
+        xmem_pool* next_pool = (xmem_pool*)_create_pool(pool->block_size, first_pool->block_count << 2);
         if(!next_pool)
         {
             return 0;
         }
 
-        pool->next              = next_pool;
-        pool                    = next_pool;
+        // swap new pool and first pool and then link them
+        xmem_pool temp_pool;
+        memcpy(&temp_pool,  first_pool, pool_element_size);
+        memcpy(first_pool,  next_pool,  pool_element_size);
+        memcpy(next_pool,   &temp_pool, pool_element_size);
+
+        first_pool->next    = next_pool;
+        pool                = first_pool;
     }
 
     // get the first free space
