@@ -16,6 +16,7 @@
  * =====================================================================================
  */
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #define TEST_COUNT 1000000
@@ -30,7 +31,7 @@ static inline uint64_t rdtsc(void)
         };
     } tsc;
  
-    asm volatile("rdtsc" :
+    __asm volatile("rdtsc" :
         "=a" (tsc.lo_32),
         "=d" (tsc.hi_32));
     return tsc.tsc_64;

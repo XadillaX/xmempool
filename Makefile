@@ -9,7 +9,7 @@ OPTIMIZATION ?= -O2
 WARNINGS = -Wno-missing-field-initializers
 DEBUG ?= -g -ggdb 
 
-REAL_CFLAGS = $(OPTIMIZATION) -fPIC $(CFLAGS) $(WARNINGS) $(DEBUG)
+REAL_CFLAGS = $(OPTIMIZATION) -fPIC $(CFLAGS) $(WARNINGS) $(DEBUG) -std=c99
 
 # Dynamic lib name
 DYLIBNAME = $(LIBNAME).so
