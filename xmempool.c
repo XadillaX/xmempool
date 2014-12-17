@@ -21,7 +21,7 @@
 #include "xmempool.h"
 
 typedef struct xmem_pool_block {
-    void*                   start;
+    char*                   start;
     unsigned int            block_size;
     struct xmem_pool_block* next;
     unsigned char           is_block_start;
@@ -31,8 +31,8 @@ typedef struct xmem_pool {
     unsigned int            block_size;
     unsigned int            block_count;
 
-    void*                   start;
-    void*                   end;
+    char*                   start;
+    char*                   end;
 
     struct xmem_pool_block* free_blocks;
     struct xmem_pool_block* free_blocks_tail;
@@ -49,9 +49,9 @@ void _alloc_block_nodes()
     static unsigned int _block_size = sizeof(xmem_pool_block);
     unsigned int        size_count  = _block_size * ALLOC_BLOCK_NODE_COUNT;
 
-    void* start;
-    void* block_ptr = start = malloc(size_count);
-    void* end       = start + size_count;
+    char* start;
+    char* block_ptr = start = malloc(size_count);
+    char* end       = start + size_count;
 
     // can't malloc more space(s).
     if(!block_ptr) return;
@@ -84,7 +84,7 @@ void _alloc_block_nodes()
     else
     {
         // otherwise, replace the whole `_free_block_ptr`.
-        _free_block_ptr             = start;
+        _free_block_ptr             = (xmem_pool_block*)start;
     }
 
     _free_block_ptr_end             = (xmem_pool_block*)(end - _block_size);
@@ -92,6 +92,8 @@ void _alloc_block_nodes()
 
 xmem_pool_block* _get_next_block_node()
 {
+    xmem_pool_block* should_return;
+
     // if no more block node,
     // generate a new block node list
     if(!_free_block_ptr)
@@ -103,7 +105,7 @@ xmem_pool_block* _get_next_block_node()
     // return 0 to stand for error
     if(!_free_block_ptr) return (xmem_pool_block*)0;
 
-    xmem_pool_block* should_return  = _free_block_ptr;
+    should_return  = _free_block_ptr;
     _free_block_ptr                 = _free_block_ptr->next;
 
     // if `should_return` is the last one,
@@ -135,9 +137,11 @@ void _recover_block_node(xmem_pool_block* node)
 
 int _xmem_count_free_blocks(xmem_pool* pool)
 {
+    xmem_pool_block* block;
+    int count;
     if(!pool->free_blocks) return 0;
-    xmem_pool_block* block  = pool->free_blocks;
-    int count               = 1;
+    block  = pool->free_blocks;
+    count               = 1;
 
     while(block != pool->free_blocks_tail)
     {
@@ -153,14 +157,17 @@ xmem_pool_handle _create_pool(unsigned int block_size,
 {
     static unsigned int _pool_size  = sizeof(xmem_pool);
     xmem_pool*          pool        = (xmem_pool*)malloc(_pool_size);
-    void*               space       = malloc(block_count * block_size);
+    char*               space       = malloc(block_count * block_size);
+
+    xmem_pool_block* start_block    = 0;
+    xmem_pool_block* end_block      = 0;
 
     // can't malloc more space
-    if(!pool) return (void*)0;
+    if(!pool) return (char*)0;
     if(!space)
     {
         free(pool);
-        return (void*)0;
+        return (char*)0;
     }
 
     // set the pool space's start and end
@@ -172,8 +179,6 @@ xmem_pool_handle _create_pool(unsigned int block_size,
     pool->next          = 0;
 
     // create free nodes!
-    xmem_pool_block* start_block    = 0;
-    xmem_pool_block* end_block      = 0;
     for(; space < pool->end; space += block_size)
     {
         xmem_pool_block* wrapper    = _get_next_block_node();
@@ -210,14 +215,15 @@ xmem_pool_handle _create_pool(unsigned int block_size,
     pool->free_blocks       = start_block;
     pool->free_blocks_tail  = end_block;
 
-    return (void*)pool;
+    return (char*)pool;
 }
 
 void xmem_print_info(xmem_pool_handle _pool)
 {
-    if(!_pool) return;
     xmem_pool* pool = _pool;
     int pool_id     = 0;
+
+    if(!_pool) return;
 
     while(pool)
     {
@@ -243,7 +249,7 @@ void xmem_print_info(xmem_pool_handle _pool)
 xmem_pool_handle xmem_create_pool(unsigned int block_size)
 {
 #ifdef XMEM_DBG
-    void* pool = _create_pool(block_size, MIN_ALLOC_LENGTH);
+    char* pool = _create_pool(block_size, MIN_ALLOC_LENGTH);
     printf("A new pool of [%d] is created!", block_size);
     return pool;
 #endif
@@ -253,9 +259,10 @@ xmem_pool_handle xmem_create_pool(unsigned int block_size)
 
 void xmem_destroy_pool(xmem_pool_handle handle)
 {
-    if(!handle) return;
     xmem_pool* pool = (xmem_pool*)handle;
     xmem_pool* next_pool;
+
+    if(!handle) return;
 
     // from pool head to pool tail
     while(pool)
@@ -290,10 +297,13 @@ void xmem_destroy_pool(xmem_pool_handle handle)
     return;
 }
 
-void* xmem_alloc(xmem_pool_handle handle)
+char* xmem_alloc(xmem_pool_handle handle)
 {
     static unsigned int pool_element_size = sizeof(xmem_pool);
     xmem_pool* pool                = (xmem_pool*)handle;
+    xmem_pool temp_pool;
+    xmem_pool_block* block;
+    char* space;
 
     // if no more space, we create a new pool
     if(!pool->free_blocks)
@@ -305,8 +315,7 @@ void* xmem_alloc(xmem_pool_handle handle)
         {
             return 0;
         }
-
-        xmem_pool temp_pool;
+        
         memcpy(&temp_pool,  pool,       pool_element_size);
         memcpy(pool,        new_pool,   pool_element_size);
         memcpy(new_pool,    &temp_pool, pool_element_size);
@@ -322,9 +331,9 @@ void* xmem_alloc(xmem_pool_handle handle)
     }
 
     // get the first free space
-    xmem_pool_block* block      = pool->free_blocks;
+    block      = pool->free_blocks;
     pool->free_blocks           = block->next;
-    void* space                 = block->start;
+    space                 = block->start;
 
     if(!pool->free_blocks) pool->free_blocks_tail = 0;
 
@@ -335,7 +344,7 @@ void* xmem_alloc(xmem_pool_handle handle)
     return space;
 }
 
-int xmem_free(xmem_pool_handle handle, void* pointer)
+int xmem_free(xmem_pool_handle handle, char* pointer)
 {
     xmem_pool* pool = (xmem_pool*)handle;
 

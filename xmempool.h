@@ -22,13 +22,13 @@
 extern "C" {
 #endif
 
-typedef void*               xmem_pool_handle;
+typedef char*               xmem_pool_handle;
 
 // 5 APIs so far
 extern xmem_pool_handle     xmem_create_pool(unsigned int block_size);
 extern void                 xmem_destroy_pool(xmem_pool_handle pool);
-extern void*                xmem_alloc(xmem_pool_handle handle);
-extern int                  xmem_free(xmem_pool_handle handle, void* pointer);
+extern char*                xmem_alloc(xmem_pool_handle handle);
+extern int                  xmem_free(xmem_pool_handle handle, char* pointer);
 extern void                 xmem_print_info(xmem_pool_handle pool);
 
 #ifdef __cplusplus
