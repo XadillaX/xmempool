@@ -186,6 +186,36 @@ Effect rate: (malloc - xmempool) / malloc
 > + Memo: 1G
 > + System: Ubuntu 12.04.2 LTS (3.5.0-23-generic)
 
+### Test 4
+
+```
+Performance of "./perf_xmem"
+  Test cases: 50
+  Times of each case: 1000000
+  Average of alloc in one case: 58532207.76 CPU cycles
+  Average of free in one case: 21924212.08 CPU cycles
+  Avarage of total in one case: 90753352.7 CPU cycles
+
+Performance of "./perf_alloc"
+  Test cases: 50
+  Times of each case: 1000000
+  Average of alloc in one case: 76495548.18 CPU cycles
+  Average of free in one case: 28027848.44 CPU cycles
+  Avarage of total in one case: 104523436.7 CPU cycles
+
+Effect rate: (malloc - xmempool) / malloc
+  Alloc: 23.48%
+  Free:  21.78%
+  Total: 13.17%
+```
+
+> This report was ran on my own notebook Lenovo Y500 which is under ***Ubuntu***.
+>
+> + CPU: 8 x Intel(R) Core(TM) i7-3630QM CPU @ 2.40GHz
+> + Memo: 4GB 1600 MHz DDR3 x 2
+> + System: Ubuntu 14.04.1 LTS (3.13.0-40-generic)
+
+
 ## Contribute
 
 You're welcome to pull requests!
