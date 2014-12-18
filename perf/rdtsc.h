@@ -1,12 +1,11 @@
 /** @refer to http://www.mcs.anl.gov/~kazutomo/rdtsc.h */
-
 #ifndef __RDTSC_H_DEFINED__
 #define __RDTSC_H_DEFINED__
-
+#include <stdint.h>
 
 #if defined(__i386__)
 
-static __inline__ unsigned long long rdtsc(void)
+static __inline__ uint64_t rdtsc(void)
 {
   unsigned long long int x;
      __asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
@@ -14,7 +13,7 @@ static __inline__ unsigned long long rdtsc(void)
 }
 #elif defined(__x86_64__)
 
-static __inline__ unsigned long long rdtsc(void)
+static __inline__ uint64_t rdtsc(void)
 {
   unsigned hi, lo;
   __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
@@ -23,7 +22,7 @@ static __inline__ unsigned long long rdtsc(void)
 
 #elif defined(__powerpc__)
 
-static __inline__ unsigned long long rdtsc(void)
+static __inline__ uint64_t rdtsc(void)
 {
   unsigned long long int result=0;
   unsigned long int upper, lower,tmp;
