@@ -17,14 +17,16 @@ xmem_pool_handler xmem_create_pool(unsigned int block_size);
 > `xmem_pool_hander` is only a pointer which `typedef`ed at **xmempool.h**.
 >
 > ```c
-> typedef void* xmem_pool_handler;
+> typedef char* xmem_pool_handler;
 > ```
+>
+> **Notice:** first I used `typedef void* xmem_pool_handler`, but for compatible, I changed it to `char*`.
 
 For an example:
 
 ```c
 typedef struct stct {
-    int id;
+    int  id;
     char str[16];
 } stct;
 
@@ -39,13 +41,13 @@ if(!pool1 || !pool2) printf("Can't alloc more space\n");
 You can get a space of a certain size via function:
 
 ```c
-void* xmem_alloc(xmem_pool_handle handle);
+char* xmem_alloc(xmem_pool_handle handle);
 ```
 
 For an example:
 
 ```c
-stct* my_stct = xmem_alloc(pool1);
+stct* my_stct = (stct*)xmem_alloc(pool1);
 if(!my_stct) printf("Can't alloc more space.\n");
 ```
 
@@ -56,7 +58,7 @@ And then you will get a **whole empty** space that fits `stct`.
 After your scope you want to recover your memory, don't use `free()`. There's a function below:
 
 ```c
-int xmem_free(xmem_pool_handle handle, void* pointer);
+int xmem_free(xmem_pool_handle handle, char* pointer);
 ```
 
 > The return value:
@@ -221,5 +223,4 @@ Effect rate: (malloc - xmempool) / malloc
 You're welcome to pull requests!
 
 「雖然我覺得不怎麼可能有人會關注我」
-
 
