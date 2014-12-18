@@ -6,8 +6,9 @@
  */
 var exec = require("child_process").exec;
 var run = require("sync-runner");
+var fs = require("fs");
 
-var TEST_TIME = 50;
+var TEST_TIME = 10;
 var regexp = /.*?(\d+).*\n.*?(\d+).*\n.*?(\d+).*\n.*?(\d+)/;
 
 exec("make perf_xmem && make perf_alloc", function(err) {
@@ -16,49 +17,50 @@ exec("make perf_xmem && make perf_alloc", function(err) {
         process.exit(4);
     }
 
-    var results = [];
+    var times = [ 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000 ];
     var cases = [ "./perf_xmem", "./perf_alloc" ];
+    var result = {};
 
     for(var i = 0; i < cases.length; i++) {
-        var test = {
-            times   : 0,
-            alloc   : 0,
-            free    : 0,
-            total   : 0
-        };
+        console.log("testing `" + cases[i] + "`...");
+        result[cases[i]] = [];
+        for(var j = 0; j < times.length; j++) {
+            console.log("  testing `" + cases[i] + " " + times[j] + "`...");
+            var test = {
+                times : 0,
+                alloc : 0,
+                free  : 0,
+                total : 0
+            };
 
-        for(var j = 0; j < TEST_TIME; j++)
-        {
-            var result  = run(cases[i]);
-            result      = regexp.exec(result);
-            test.times += Number(result[1]);
-            test.alloc += Number(result[2]);
-            test.free  += Number(result[3]);
-            test.total += Number(result[4]);
+            for(var k = 0; k < TEST_TIME; k++) {
+                console.log("    testing `" + cases[i] + " " + times[j] + "` for " + k + " times...");
+                var stdout  = run(cases[i] + " " + times[j]);
+                var output  = regexp.exec(stdout);
+                test.times += Number(output[1]);
+                test.alloc += Number(output[2]);
+                test.free  += Number(output[3]);
+                test.total += Number(output[4]);
+                console.log("    done.");
+            }
+
+            for(var key in test) {
+                if(!test.hasOwnProperty(key)) continue;
+                test[key] /= TEST_TIME;
+            }
+
+            result[cases[i]].push(test);
+            console.log("  done.");
         }
-
-        for(var key in test) {
-            if(!test.hasOwnProperty(key)) continue;
-            test[key] /= TEST_TIME;
-        }
-
-        results.push(test);
+        console.log("done.");
     }
 
-    for(var j = 0; j < cases.length; j++) {
-        console.log("Performance of \"" + cases[j] + "\"");
-        console.log("  Test cases: " + TEST_TIME);
-        console.log("  Times of each case: " + results[j].times);
-        console.log("  Average of alloc in one case: " + results[j].alloc + " CPU cycles");
-        console.log("  Average of free in one case: " + results[j].free + " CPU cycles");
-        console.log("  Avarage of total in one case: " + results[j].total + " CPU cycles");
-        console.log();
-    }
-
-    console.log("Effect rate: (malloc - xmempool) / malloc");
-    console.log("  Alloc:", ((results[1].alloc - results[0].alloc) / results[1].alloc * 100).toFixed(2) + "%");
-    console.log("  Free: ", ((results[1].free - results[0].free) / results[1].free * 100).toFixed(2) + "%");
-    console.log("  Total:", ((results[1].total - results[0].total) / results[1].total * 100).toFixed(2) + "%");
-    console.log();
+    fs.writeFile("./perf/report/" + (+new Date()) + ".json", JSON.stringify(result), { encoding: "utf8" }, function(err) {
+        if(err) {
+            console.error("error occurred: " + err.message);
+        } else {
+            console.log("😊 all done!");
+        }
+    });
 });
 
