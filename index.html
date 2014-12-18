@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>Performance Report - xmempool</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <script>
+        var data = {
+            mac : {"./perf_xmem":[{"times":10,"alloc":8524,"free":274.7,"total":22086.4},{"times":100,"alloc":9143.5,"free":1222.6,"total":20196.5},{"times":1000,"alloc":54111.4,"free":11856.8,"total":79467.2},{"times":10000,"alloc":966818.4,"free":415574.3,"total":1526970.3},{"times":100000,"alloc":8699388,"free":4099070.8,"total":14196120.4},{"times":1000000,"alloc":85837922.2,"free":36005187,"total":135477697.9},{"times":10000000,"alloc":1097308611.2,"free":521264073.1,"total":1903542243.9},{"times":10000000,"alloc":1186550055.2,"free":604603569.3,"total":2081353016.1}],"./perf_alloc":[{"times":10,"alloc":5282,"free":5520.7,"total":10843.2},{"times":100,"alloc":16750.3,"free":28802.9,"total":45595.5},{"times":1000,"alloc":126718.8,"free":220003.4,"total":346764.2},{"times":10000,"alloc":1271442.7,"free":2093563.5,"total":3365048.1},{"times":100000,"alloc":13081383.4,"free":23242086.3,"total":36323508.3},{"times":1000000,"alloc":133752463.7,"free":259788391.1,"total":393540900.3},{"times":10000000,"alloc":1434226234.4,"free":2604407105.1,"total":4038633385.8},{"times":10000000,"alloc":1453841988.6,"free":2620324508.4,"total":4074166541.5}]}
+        };
+    </script>
+</head>
+<body>
+    <h1>Performance Report of X Memo Pool</h1>
+
+    <h2>Machines</h2>
+
+    <h3>Macbook Air</h3>
+    <ul>
+        <li>CPU: 4 x 1.3GHz Intel Core i5</li>
+        <li>Memo: 4GB 1600 MHz DDR3</li>
+        <li>System: OS X Yosemite 10.10.2</li>
+    </ul>
+
+    <h2>Charts</h2>
+
+    <div id="total" style="height: 400px;"></div>
+    <div id="alloc" style="height: 400px;"></div>
+    <div id="free" style="height: 400px;"></div>
+    <script src="echarts/echarts-all.js"></script>
+    <script>
+        function getData(machine, type) {
+            var _data = data[machine];
+            var xmem = _data["./perf_xmem"];
+            var alloc = _data["./perf_alloc"];
+            var result = [];
+            for(var i = 0; i < xmem.length; i++) {
+                var value = (alloc[i][type] - xmem[i][type]) / alloc[i][type];
+                result.push((value * 100).toFixed(2));
+            }
+            return result;
+        }
+        
+        var totalReport = echarts.init(document.getElementById("total"));
+        var allocReport = echarts.init(document.getElementById("alloc"));
+        var freeReport = echarts.init(document.getElementById("free"));
+        
+        var totalOption = {
+            tooltip: {
+                trigger: "axis"
+            },
+            legend: {
+                data: [ "Macbook Air" ]
+            },
+            toolbox: {
+            show : true,
+                 feature : {
+                     mark : {show: true},
+                     dataView : {show: true, readOnly: false},
+                     magicType : {show: true, type: ["line", "bar", "stack", "tiled"]},
+                     restore : {show: true},
+                     saveAsImage : {show: true}
+                 }
+            },
+            calculable : true,
+            xAxis : [
+                {
+                    type : "category",
+                    boundaryGap : false,
+                    data : ["10","100","1000","10000","100000","1000000","1000000"]
+                }
+            ],
+            yAxis : [
+                {
+                    type : "value",
+                    splitNumber: 3
+                }
+            ],
+            series : [
+                {
+                    name:"Macbook Air",
+                    type:"line",
+                    stack: "Rate",
+                    data: getData("mac", "total")
+                }
+            ]
+        };
+        
+        
+        var allocOption = {
+            tooltip: {
+                trigger: "axis"
+            },
+            legend: {
+                data: [ "Macbook Air" ]
+            },
+            toolbox: {
+            show : true,
+                 feature : {
+                     mark : {show: true},
+                     dataView : {show: true, readOnly: false},
+                     magicType : {show: true, type: ["line", "bar", "stack", "tiled"]},
+                     restore : {show: true},
+                     saveAsImage : {show: true}
+                 }
+            },
+            calculable : true,
+            xAxis : [
+                {
+                    type : "category",
+                    boundaryGap : false,
+                    data : ["10","100","1000","10000","100000","1000000","1000000"]
+                }
+            ],
+            yAxis : [
+                {
+                    type : "value",
+                    splitNumber: 3
+                }
+            ],
+            series : [
+                {
+                    name:"Macbook Air",
+                    type:"line",
+                    stack: "Rate",
+                    data: getData("mac", "alloc")
+                }
+            ]
+        };
+        
+        var freeOption = {
+            tooltip: {
+                trigger: "axis"
+            },
+            legend: {
+                data: [ "Macbook Air" ]
+            },
+            toolbox: {
+            show : true,
+                 feature : {
+                     mark : {show: true},
+                     dataView : {show: true, readOnly: false},
+                     magicType : {show: true, type: ["line", "bar", "stack", "tiled"]},
+                     restore : {show: true},
+                     saveAsImage : {show: true}
+                 }
+            },
+            calculable : true,
+            xAxis : [
+                {
+                    type : "category",
+                    boundaryGap : false,
+                    data : ["10","100","1000","10000","100000","1000000","1000000"]
+                }
+            ],
+            yAxis : [
+                {
+                    type : "value",
+                    splitNumber: 3
+                }
+            ],
+            series : [
+                {
+                    name:"Macbook Air",
+                    type:"line",
+                    stack: "Rate",
+                    data: getData("mac", "free")
+                }
+            ]
+        };
+
+        totalReport.setOption(totalOption);
+        allocReport.setOption(allocOption);
+        freeReport.setOption(freeOption);
+    </script>
+</body>
+</html>
