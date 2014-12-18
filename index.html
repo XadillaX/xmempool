@@ -245,8 +245,7 @@
     <div id="free" style="height: 400px;"></div>
     <script src="echarts/echarts-all.js"></script>
     <script>
-        function getData(machine, type)
-        {
+        function getData(machine, type) {
             var _data = data[machine];
             var xmem = _data["./perf_xmem"];
             var alloc = _data["./perf_alloc"];
@@ -337,6 +336,7 @@
         };
 
         var allocOption = {
+            title: { text: "Alloc faster rate" },
             tooltip:
             {
                 trigger: "axis"
@@ -404,6 +404,7 @@
         };
 
         var freeOption = {
+            title: { text: "Free faster rate" },
             tooltip:
             {
                 trigger: "axis"
