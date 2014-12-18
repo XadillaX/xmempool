@@ -18,12 +18,12 @@
 #include "../xmempool.h"
 #include "common.h"
 
-xmem_pool_handle    pool = NULL;
-test_struct*        test_array[TEST_COUNT];
+xmem_pool_handle pool        = NULL;
+test_struct*     test_array[TEST_COUNT];
 
-int                 total = 0;
-int                 alloc_total = 0;
-int                 free_total = 0;
+int              total       = 0;
+int              alloc_total = 0;
+int              free_total  = 0;
 
 int main()
 {
@@ -34,14 +34,14 @@ int main()
     total_start = alloc_start = rdtsc();
     for(int i = 0; i < TEST_COUNT; i++)
     {
-        test_array[i] = xmem_alloc(pool);
+        test_array[i] = (test_struct*)xmem_alloc(pool);
     }
     alloc_total = rdtsc() - alloc_start;
 
     free_start = rdtsc();
     for(int i = 0; i < TEST_COUNT; i++)
     {
-        xmem_free(pool, test_array[i]);
+        xmem_free(pool, (char*)test_array[i]);
     }
     free_total = rdtsc() - free_start;
     xmem_destroy_pool(pool);

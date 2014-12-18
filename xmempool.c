@@ -21,33 +21,33 @@
 #include "xmempool.h"
 
 typedef struct xmem_pool_block {
-    char*                   start;
-    unsigned int            block_size;
-    struct xmem_pool_block* next;
-    unsigned char           is_block_start;
+    char*    start;
+    uint32_t block_size;
+    struct   xmem_pool_block* next;
+    uint8_t  is_block_start;
 } xmem_pool_block;
 
 typedef struct xmem_pool {
-    unsigned int            block_size;
-    unsigned int            block_count;
+    uint32_t          block_size;
+    uint32_t          block_count;
 
-    char*                   start;
-    char*                   end;
+    char*             start;
+    char*             end;
 
-    struct xmem_pool_block* free_blocks;
-    struct xmem_pool_block* free_blocks_tail;
-    struct xmem_pool*       next;
+    xmem_pool_block*  free_blocks;
+    xmem_pool_block*  free_blocks_tail;
+    struct xmem_pool* next;
 } xmem_pool;
 
 #define ALLOC_BLOCK_NODE_COUNT  (1024)
 #define MIN_ALLOC_LENGTH        (1024)
-xmem_pool_block*    _free_block_ptr     = 0;
-xmem_pool_block*    _free_block_ptr_end = 0;
+xmem_pool_block* _free_block_ptr     = 0;
+xmem_pool_block* _free_block_ptr_end = 0;
 
 void _alloc_block_nodes()
 {
-    static unsigned int _block_size = sizeof(xmem_pool_block);
-    unsigned int        size_count  = _block_size * ALLOC_BLOCK_NODE_COUNT;
+    static uint32_t _block_size = sizeof(xmem_pool_block);
+    uint32_t        size_count  = _block_size * ALLOC_BLOCK_NODE_COUNT;
 
     char* start;
     char* block_ptr = start = malloc(size_count);
@@ -58,9 +58,9 @@ void _alloc_block_nodes()
 
     for(; block_ptr < end; block_ptr += _block_size)
     {
-        xmem_pool_block* block  = (xmem_pool_block*)block_ptr;
-        block->is_block_start   = (block_ptr == start);
-        block->start            = 0;
+        xmem_pool_block* block = (xmem_pool_block*)block_ptr;
+        block->is_block_start  = (block_ptr == start);
+        block->start           = 0;
 
         // if it's not starting block,
         // set previous block's next block
@@ -79,15 +79,15 @@ void _alloc_block_nodes()
         // there's block pointer(s) before,
         // and still some in the `_free_block_ptr`, 
         // concat newer one list to the old one's tail.
-        _free_block_ptr_end->next   = (xmem_pool_block*)start;
+        _free_block_ptr_end->next = (xmem_pool_block*)start;
     }
     else
     {
         // otherwise, replace the whole `_free_block_ptr`.
-        _free_block_ptr             = (xmem_pool_block*)start;
+        _free_block_ptr = (xmem_pool_block*)start;
     }
 
-    _free_block_ptr_end             = (xmem_pool_block*)(end - _block_size);
+    _free_block_ptr_end = (xmem_pool_block*)(end - _block_size);
 }
 
 xmem_pool_block* _get_next_block_node()
@@ -105,14 +105,14 @@ xmem_pool_block* _get_next_block_node()
     // return 0 to stand for error
     if(!_free_block_ptr) return (xmem_pool_block*)0;
 
-    should_return  = _free_block_ptr;
-    _free_block_ptr                 = _free_block_ptr->next;
+    should_return   = _free_block_ptr;
+    _free_block_ptr = _free_block_ptr->next;
 
     // if `should_return` is the last one,
     // we should set the tail to 0.
     if(should_return == _free_block_ptr_end)
     {
-        _free_block_ptr_end         = 0;
+        _free_block_ptr_end = 0;
     }
 
     return should_return;
@@ -120,14 +120,14 @@ xmem_pool_block* _get_next_block_node()
 
 void _recover_block_node(xmem_pool_block* node)
 {
-    node->start         = 0;
-    node->next          = 0;
-    node->block_size    = 0;
+    node->start      = 0;
+    node->next       = 0;
+    node->block_size = 0;
 
     if(_free_block_ptr && _free_block_ptr_end)
     {
         _free_block_ptr_end->next = node;
-        _free_block_ptr_end = node;
+        _free_block_ptr_end       = node;
     }
     else
     {
@@ -138,29 +138,28 @@ void _recover_block_node(xmem_pool_block* node)
 int _xmem_count_free_blocks(xmem_pool* pool)
 {
     xmem_pool_block* block;
-    int count;
+    int              count;
+
     if(!pool->free_blocks) return 0;
-    block  = pool->free_blocks;
-    count               = 1;
+    block = pool->free_blocks;
+    count = 1;
 
     while(block != pool->free_blocks_tail)
     {
         count++;
-        block               = block->next;
+        block = block->next;
     }
 
     return count;
 }
 
-xmem_pool_handle _create_pool(unsigned int block_size,
-        unsigned int block_count)
+xmem_pool_handle _create_pool(uint32_t block_size, uint32_t block_count)
 {
-    static unsigned int _pool_size  = sizeof(xmem_pool);
-    xmem_pool*          pool        = (xmem_pool*)malloc(_pool_size);
-    char*               space       = malloc(block_count * block_size);
-
-    xmem_pool_block* start_block    = 0;
-    xmem_pool_block* end_block      = 0;
+    static uint32_t  _pool_size  = sizeof(xmem_pool);
+    xmem_pool*       pool        = (xmem_pool*)malloc(_pool_size);
+    char*            space       = malloc(block_count * block_size);
+    xmem_pool_block* start_block = 0;
+    xmem_pool_block* end_block   = 0;
 
     // can't malloc more space
     if(!pool) return (char*)0;
@@ -171,17 +170,17 @@ xmem_pool_handle _create_pool(unsigned int block_size,
     }
 
     // set the pool space's start and end
-    pool->start         = space;
-    pool->end           = space + (block_count * block_size);
+    pool->start       = space;
+    pool->end         = space + (block_count * block_size);
 
-    pool->block_size    = block_size;
-    pool->block_count   = block_count;
-    pool->next          = 0;
+    pool->block_size  = block_size;
+    pool->block_count = block_count;
+    pool->next        = 0;
 
     // create free nodes!
     for(; space < pool->end; space += block_size)
     {
-        xmem_pool_block* wrapper    = _get_next_block_node();
+        xmem_pool_block* wrapper = _get_next_block_node();
         if(!start_block)
         {
             start_block = wrapper; 
@@ -208,19 +207,22 @@ xmem_pool_handle _create_pool(unsigned int block_size,
         wrapper->next       = 0;
 
         // concat wrapper to the tail of block list
-        if(end_block) end_block->next = wrapper;
+        if(end_block) 
+        {
+            end_block->next = wrapper;
+        }
         end_block = wrapper;
     }
 
-    pool->free_blocks       = start_block;
-    pool->free_blocks_tail  = end_block;
+    pool->free_blocks      = start_block;
+    pool->free_blocks_tail = end_block;
 
     return (char*)pool;
 }
 
 void xmem_print_info(xmem_pool_handle _pool)
 {
-    xmem_pool* pool = _pool;
+    xmem_pool* pool = (xmem_pool*)_pool;
     int pool_id     = 0;
 
     if(!_pool) return;
@@ -235,14 +237,14 @@ void xmem_print_info(xmem_pool_handle _pool)
 
         if(pool_id == 1)
         {
-            printf("  + free blocks: %d\n",             _xmem_count_free_blocks(pool));
+            printf("  + free blocks: %d\n", _xmem_count_free_blocks(pool));
         }
         else
         {
             printf("  + free blocks: -\n");
         }
 
-        pool        = pool->next;
+        pool = pool->next;
     }
 }
 
@@ -274,7 +276,7 @@ void xmem_destroy_pool(xmem_pool_handle handle)
 
         // all the blocks are mansged in the
         // first pool.
-        if(pool == handle)
+        if(pool == (xmem_pool*)handle)
         {
             xmem_pool_block* block = pool->free_blocks;
             xmem_pool_block* next_block;
@@ -282,16 +284,16 @@ void xmem_destroy_pool(xmem_pool_handle handle)
             // from block head to block tail
             while(block)
             {
-                next_block  = block->next;
+                next_block = block->next;
                 _recover_block_node(block);
-                block       = next_block;
+                block = next_block;
             }
         }
 
         // move to next pool
-        next_pool       = pool->next;
+        next_pool = pool->next;
         free(pool);
-        pool            = next_pool;
+        pool = next_pool;
     }
 
     return;
@@ -299,8 +301,8 @@ void xmem_destroy_pool(xmem_pool_handle handle)
 
 char* xmem_alloc(xmem_pool_handle handle)
 {
-    static unsigned int pool_element_size = sizeof(xmem_pool);
-    xmem_pool* pool                = (xmem_pool*)handle;
+    static uint32_t pool_element_size = sizeof(xmem_pool);
+    xmem_pool* pool                   = (xmem_pool*)handle;
     xmem_pool temp_pool;
     xmem_pool_block* block;
     char* space;
@@ -308,7 +310,8 @@ char* xmem_alloc(xmem_pool_handle handle)
     // if no more space, we create a new pool
     if(!pool->free_blocks)
     {
-        xmem_pool* new_pool = (xmem_pool*)_create_pool(pool->block_size, 
+        xmem_pool* new_pool = (xmem_pool*)_create_pool(
+                pool->block_size, 
                 pool->block_count << 1);
 
         if(!new_pool)
@@ -316,9 +319,9 @@ char* xmem_alloc(xmem_pool_handle handle)
             return 0;
         }
         
-        memcpy(&temp_pool,  pool,       pool_element_size);
-        memcpy(pool,        new_pool,   pool_element_size);
-        memcpy(new_pool,    &temp_pool, pool_element_size);
+        memcpy(&temp_pool, pool,       pool_element_size);
+        memcpy(pool,       new_pool,   pool_element_size);
+        memcpy(new_pool,   &temp_pool, pool_element_size);
 
         pool->next = new_pool;
 
@@ -331,9 +334,9 @@ char* xmem_alloc(xmem_pool_handle handle)
     }
 
     // get the first free space
-    block      = pool->free_blocks;
-    pool->free_blocks           = block->next;
-    space                 = block->start;
+    block             = pool->free_blocks;
+    pool->free_blocks = block->next;
+    space             = block->start;
 
     if(!pool->free_blocks) pool->free_blocks_tail = 0;
 

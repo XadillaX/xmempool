@@ -21,15 +21,19 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <stdint.h>
 
-typedef char*               xmem_pool_handle;
+typedef char*           xmem_pool_handle;
 
 // 5 APIs so far
-extern xmem_pool_handle     xmem_create_pool(unsigned int block_size);
-extern void                 xmem_destroy_pool(xmem_pool_handle pool);
-extern char*                xmem_alloc(xmem_pool_handle handle);
-extern int                  xmem_free(xmem_pool_handle handle, char* pointer);
-extern void                 xmem_print_info(xmem_pool_handle pool);
+//   not recommanded for multi-threaded.
+//   if you want to use it for multi-threaded
+//   now, please use one pool for one thread.
+extern xmem_pool_handle xmem_create_pool(uint32_t block_size);
+extern void             xmem_destroy_pool(xmem_pool_handle pool);
+extern char*            xmem_alloc(xmem_pool_handle handle);
+extern int              xmem_free(xmem_pool_handle handle, char* pointer);
+extern void             xmem_print_info(xmem_pool_handle pool);
 
 #ifdef __cplusplus
 }

@@ -23,7 +23,7 @@
 #define TEST_COUNT 1000000
 
 typedef struct test_struct {
-    int id;
+    int  id;
     char str[16];
 } test_struct;
 

@@ -22,7 +22,7 @@
 #define TEST_COUNT 4096
 
 typedef struct test_struct {
-    int id;
+    int  id;
     char str[16];
 } test_struct;
 
@@ -46,7 +46,7 @@ int main()
     test_struct* test_array[TEST_COUNT];
     for(int i = 0; i < TEST_COUNT; i++)
     {
-        test_array[i] = xmem_alloc(pool);
+        test_array[i]     = (test_struct*)xmem_alloc(pool);
         test_array[i]->id = i;
         generate_str(test_array[i]->str);
         print_test_struct(test_array[i]);
@@ -54,7 +54,7 @@ int main()
 
     for(int i = 0; i < TEST_COUNT / 2; i++)
     {
-        xmem_free(pool, test_array[i]);
+        xmem_free(pool, (char*)test_array[i]);
     }
 
     xmem_print_info(pool);
@@ -62,7 +62,7 @@ int main()
 
     for(int i = TEST_COUNT / 2; i < TEST_COUNT; i++)
     {
-        xmem_free(pool, test_array[i]);
+        xmem_free(pool, (char*)test_array[i]);
     }
 
     xmem_print_info(pool);
