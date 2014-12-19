@@ -4,7 +4,7 @@
   "description": "perf toolkit for xmempool.",
   "main": "perf.js",
   "dependencies": {
-    "sync-runner": "^0.0.5-fixwin"
+    "sync-runner": "^0.0.7"
   },
   "devDependencies": {},
   "scripts": {
