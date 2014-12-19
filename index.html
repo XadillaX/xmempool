@@ -208,10 +208,14 @@
                 "free": 597081234.3,
                 "total": 2981078251.8
             }]
-        };		
+        };        
+    
+        var zanarblahblah = {"./perf_xmem":[{"times":10,"alloc":1173.6,"free":383.6,"total":10104.8},{"times":100,"alloc":9718.8,"free":1822.8,"total":20328.4},{"times":1000,"alloc":85150.8,"free":16020.8,"total":109889.6},{"times":10000,"alloc":1155014,"free":282274,"total":1546682.8},{"times":100000,"alloc":11603865.6,"free":2747750.4,"total":16274670.4},{"times":1000000,"alloc":112886031.8,"free":26817197.4,"total":157638284.4},{"times":10000000,"alloc":1342887245,"free":339350415,"total":1946483018.2},{"times":10000000,"alloc":1411829382.8,"free":355884357.6,"total":2024174383.2}],"./perf_alloc":[{"times":10,"alloc":3950.4,"free":4118,"total":8124.4},{"times":100,"alloc":33478.8,"free":32057.2,"total":65592.4},{"times":1000,"alloc":312811.6,"free":310386.4,"total":623254.4},{"times":10000,"alloc":3162913.6,"free":3106868.8,"total":6269838.4},{"times":100000,"alloc":31724080.8,"free":31756108.4,"total":63480245.2},{"times":1000000,"alloc":319266780,"free":317867819.2,"total":637134658},{"times":10000000,"alloc":3211709190.6,"free":3253840252.6,"total":6465549672.4},{"times":10000000,"alloc":3337355907.6,"free":3334449924.4,"total":6671806082}]};
+    
         var data = {
             mac: mac,
-            VPS: vps
+            VPS: vps,
+            zanarblahblah: zanarblahblah
         };
 
         var theme = {
@@ -643,7 +647,7 @@
                 fontFamily: '微软雅黑, Arial, Verdana, sans-serif'
             }
         };
-        var machines = ["Macbook Air", "VPS"];
+        var machines = ["Macbook Air", "VPS", "Machine 3"];
     </script>
 </head>
 
@@ -664,6 +668,13 @@
         <li>CPU: 2 x Intel(R) Xeon(R) CPU E5-2620 0 @ 2.00GHz</li>
         <li>Memo: 1GB</li>
         <li>System: Ubuntu 12.04.2 LTS (3.5.0-23-generic)</li>
+    </ul>
+    
+    <h3>Yet another PC (Machine 3)</h3>
+    <ul>
+        <li>CPU: 2 x Intel(R) Pentium(R) CPU G620 @ 2.60GHz</li>
+        <li>Memo: 2 x 4GB 1600 MHz DDR3</li>
+        <li>System: Windows 7</li>
     </ul>
 
     <h2>Charts</h2>
@@ -761,6 +772,12 @@
                 type: "line",
                 stack: "Rate",
                 data: getData("VPS", "total")
+            },
+            {
+                name: "Machine 3",
+                type: "line",
+                stack: "Rate",
+                data: getData("zanarblahblah", "total")
             }]
         };
 
@@ -831,6 +848,12 @@
                 type: "line",
                 stack: "Rate",
                 data: getData("VPS", "alloc")
+            },
+            {
+                name: "Machine 3",
+                type: "line",
+                stack: "Rate",
+                data: getData("zanarblahblah", "alloc")
             }]
         };
 
@@ -901,6 +924,12 @@
                 type: "line",
                 stack: "Rate",
                 data: getData("VPS", "free")
+            },
+            {
+                name: "Machine 3",
+                type: "line",
+                stack: "Rate",
+                data: getData("zanarblahblah", "free")
             }]
         };
 
