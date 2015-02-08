@@ -1,5 +1,7 @@
 # X Memo Pool
 
+[![Join the chat at https://gitter.im/XadillaX/xmempool](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/XadillaX/xmempool?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A memory pool implemented by C.
 
 > Sharing a same pool in multi-thread is not recommanded.
