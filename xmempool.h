@@ -21,7 +21,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifdef _MSC_VER
+#include "stdint.h"
+#else
 #include <stdint.h>
+#endif
 
 typedef char*           xmem_pool_handle;
 
