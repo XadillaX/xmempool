@@ -211,11 +211,15 @@
         };        
     
         var zanarblahblah = {"./perf_xmem":[{"times":10,"alloc":1173.6,"free":383.6,"total":10104.8},{"times":100,"alloc":9718.8,"free":1822.8,"total":20328.4},{"times":1000,"alloc":85150.8,"free":16020.8,"total":109889.6},{"times":10000,"alloc":1155014,"free":282274,"total":1546682.8},{"times":100000,"alloc":11603865.6,"free":2747750.4,"total":16274670.4},{"times":1000000,"alloc":112886031.8,"free":26817197.4,"total":157638284.4},{"times":10000000,"alloc":1342887245,"free":339350415,"total":1946483018.2},{"times":10000000,"alloc":1411829382.8,"free":355884357.6,"total":2024174383.2}],"./perf_alloc":[{"times":10,"alloc":3950.4,"free":4118,"total":8124.4},{"times":100,"alloc":33478.8,"free":32057.2,"total":65592.4},{"times":1000,"alloc":312811.6,"free":310386.4,"total":623254.4},{"times":10000,"alloc":3162913.6,"free":3106868.8,"total":6269838.4},{"times":100000,"alloc":31724080.8,"free":31756108.4,"total":63480245.2},{"times":1000000,"alloc":319266780,"free":317867819.2,"total":637134658},{"times":10000000,"alloc":3211709190.6,"free":3253840252.6,"total":6465549672.4},{"times":10000000,"alloc":3337355907.6,"free":3334449924.4,"total":6671806082}]};
+
+        var huabanDev = 
+{"./perf_xmem":[{"times":10,"alloc":4316.8,"free":482.4,"total":19529.6},{"times":100,"alloc":7081.2,"free":3734.4,"total":25980},{"times":1000,"alloc":57401.6,"free":27391.6,"total":99846},{"times":10000,"alloc":963756.8,"free":512234.4,"total":1690326},{"times":100000,"alloc":9382364.8,"free":4778318.8,"total":16099735.6},{"times":1000000,"alloc":87405898.4,"free":48729046.4,"total":153926956},{"times":10000000,"alloc":1082809374.4,"free":606202156,"total":1952134155.2},{"times":10000000,"alloc":1081459299.6,"free":604584866.8,"total":1949674956.8}],"./perf_alloc":[{"times":10,"alloc":97653.2,"free":4166.4,"total":101874.8},{"times":100,"alloc":101324.4,"free":7309.6,"total":108689.6},{"times":1000,"alloc":193274.4,"free":40183.2,"total":233514.8},{"times":10000,"alloc":1111108.8,"free":374126.8,"total":1485293.2},{"times":100000,"alloc":10559029.6,"free":3695396.8,"total":14254484.4},{"times":1000000,"alloc":111467646,"free":39247373.2,"total":150715077.2},{"times":10000000,"alloc":1106889791.6,"free":396196188.8,"total":1503086035.6},{"times":10000000,"alloc":1105497671.2,"free":393961228.4,"total":1499458954.4}]};
     
         var data = {
             mac: mac,
             VPS: vps,
-            zanarblahblah: zanarblahblah
+            zanarblahblah: zanarblahblah,
+            huabanDev: huabanDev
         };
 
         var theme = {
@@ -676,6 +680,14 @@
         <li>Memo: 2 x 4GB 1600 MHz DDR3</li>
         <li>System: Windows 7</li>
     </ul>
+
+    <h3>Huaban Dev Server</h3>
+    <ul>
+        <li>CPU: 24 x Intel(R) Xeon(R) CPU E5-2620 @ 2.00GHz</li>
+        <li>Memo: 6 x 8GB 1333 MHz DDR3</li>
+        <li>System: CentOS release 6.6 (Final)</li>
+    </ul>
+
 
     <h2>Charts</h2>
 

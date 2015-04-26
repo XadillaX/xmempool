@@ -6,3 +6,5 @@ perf*
 *.a
 *.o
 *.so
+
+xmempool-test
