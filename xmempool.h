@@ -5,13 +5,12 @@
  *
  *    Description:  XadillaX' memory pool for C.
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  2014/12/08 11时41分18秒
  *       Revision:  none
  *       Compiler:  gcc
  *
  *         Author:  XadillaX, 
- *   Organization:  Huaban.com
  *
  * =====================================================================================
  */
@@ -23,7 +22,7 @@ extern "C" {
 #endif
 
 #ifdef _MSC_VER
-#include "stdint.h"
+#include "__stdint.h"
 #else
 #include <stdint.h>
 #endif

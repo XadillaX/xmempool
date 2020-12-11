@@ -1,8 +1,0 @@
-[
-    {
-        "directory": "/tmp",
-        "command": "gcc xmempool.c",
-        "file": "xmempool.c"
-    }
-]
-

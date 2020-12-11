@@ -5,13 +5,12 @@
  *
  *    Description:  XadillaX' memory pool for C.
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  2014/12/08 11时41分48秒
  *       Revision:  none
  *       Compiler:  gcc
  *
  *         Author:  XadillaX
- *   Organization:  Huaban.com
  *
  * =====================================================================================
  */
@@ -375,4 +374,3 @@ int xmem_free(xmem_pool_handle handle, char* pointer)
 
     return 1;
 }
-
