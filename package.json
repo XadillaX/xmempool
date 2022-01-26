@@ -1,12 +1,13 @@
 {
-  "name": "xmempool-perf",
+  "name": "xmempool",
   "version": "1.0.0",
-  "description": "perf toolkit for xmempool.",
+  "description": "Toolkit for xmempool dev.",
   "main": "perf.js",
-  "dependencies": {
-    "sync-runner": "^0.1.3"
+  "devDependencies": {
+    "clang-format": "^1.6.0",
+    "eslint": "^8.7.0",
+    "eslint-config-egg": "^10.0.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

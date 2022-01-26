@@ -38,3 +38,6 @@ node_modules
 perf_alloc
 perf_xmem
 
+.clang-format-stamp
+.cpplint-stamp
+compile_commands.json
