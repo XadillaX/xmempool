@@ -121,7 +121,9 @@ static inline xmem_pool_block* _get_next_block_node() {
 }
 
 static inline void _recover_block_node(xmem_pool_block* node) {
-  node->block_size = node->next = node->start = 0;
+  node->block_size = 0;
+  node->next = NULL;
+  node->start = NULL;
 
   if (_free_block_ptr && _free_block_ptr_end) {
     _free_block_ptr_end->next = node;
@@ -234,9 +236,13 @@ void xmem_print_info(xmem_pool_handle _pool) {
     printf("----- POOL OF SIZE [%.4d] -----\n", pool->block_size);
     printf("  + id: %d\n", pool_id++);
     printf("  + count: %d\n", pool->block_count);
+
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
     printf("  + spaces: [0x%.8X, 0x%.8X)\n",
            (unsigned int)pool->start,
            (unsigned int)pool->end);
+    #pragma GCC diagnostic pop
 
     if (pool_id == 1) {
       printf("  + free blocks: %d\n", _xmem_count_free_blocks(pool));
