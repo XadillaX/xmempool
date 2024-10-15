@@ -2,14 +2,14 @@
   "name": "xmempool",
   "version": "1.0.0",
   "description": "Toolkit for xmempool dev.",
-  "main": "perf.js",
   "devDependencies": {
     "clang-format": "^1.6.0",
     "eslint": "^8.7.0",
     "eslint-config-egg": "^10.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "make test && ./xmempool-test",
+    "perf": "node perf.js"
   },
   "repository": {
     "type": "git",

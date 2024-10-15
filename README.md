@@ -1,115 +1,117 @@
 # X Memo Pool
 
-[![Join the chat at https://gitter.im/XadillaX/xmempool](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/XadillaX/xmempool?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 A memory pool implemented by C.
 
-> Sharing a same pool in multi-thread is not recommanded.
+## Overview
+
+X Memo Pool is a lightweight and efficient memory management solution designed to optimize memory allocation and deallocation in C programs. It provides a pool-based approach to memory management, which can significantly improve performance in scenarios where frequent allocations of fixed-size blocks are required.
+
+> Note: Sharing a single pool across multiple threads is not recommended for thread safety.
+
+## Features
+
+- Fast allocation and deallocation of fixed-size memory blocks
+- Automatic pool expansion when the current pool is exhausted
+- Zero-initialization of allocated blocks
+- Easy-to-use API with creation, allocation, freeing, and destruction functions
+- Debugging support with pool information printing
 
 ## Usage
 
-### Create Pool
+### Creating a Pool
 
-At first you should create a pool handler for your data (or structure).
+To start using X Memo Pool, first create a pool handler for your data structure:
 
 ```c
-xmem_pool_handler xmem_create_pool(unsigned int block_size);
+xmem_pool_handle xmem_create_pool(uint32_t block_size);
 ```
 
-> `xmem_pool_hander` is only a pointer which `typedef`ed at **xmempool.h**.
->
-> ```c
-> typedef char* xmem_pool_handler;
-> ```
->
-> **Notice:** first I used `typedef void* xmem_pool_handler`, but for compatible, I changed it to `char*`.
-
-For an example:
+Example:
 
 ```c
-typedef struct stct {
+typedef struct {
     int  id;
     char str[16];
-} stct;
+} my_struct;
 
-xmem_pool_handler pool1 = xmem_create_pool(sizeof(stct));
-xmem_pool_handler pool2 = xmem_create_pool(sizeof(int));
-
-if(!pool1 || !pool2) printf("Can't alloc more space\n");
+xmem_pool_handle pool = xmem_create_pool(sizeof(my_struct));
+if (!pool) {
+    printf("Failed to create memory pool\n");
+}
 ```
 
-### Allocate Memory
+### Allocating Memory
 
-You can get a space of a certain size via function:
+To allocate a block from the pool:
 
 ```c
 char* xmem_alloc(xmem_pool_handle handle);
 ```
 
-For an example:
+Example:
 
 ```c
-stct* my_stct = (stct*)xmem_alloc(pool1);
-if(!my_stct) printf("Can't alloc more space.\n");
+my_struct* data = (my_struct*)xmem_alloc(pool);
+if (!data) {
+    printf("Failed to allocate memory from pool\n");
+}
 ```
 
-And then you will get a **whole empty** space that fits `stct`.
+### Freeing Memory
 
-### Recover Memory
-
-After your scope you want to recover your memory, don't use `free()`. There's a function below:
+To return a block to the pool:
 
 ```c
 int xmem_free(xmem_pool_handle handle, char* pointer);
 ```
 
-> The return value:
-> + `0`: invalid pool handler or the pointer not belongs to this pool, can't be recovered.
-> + `1`: succeeded.
-
-For an example:
+Example:
 
 ```c
-int result = xmem_free(pool1, my_stct);
-if(!result) printf("Cannot be recovered.\n");
+int result = xmem_free(pool, (char*)data);
+if (!result) {
+    printf("Failed to free memory\n");
+}
 ```
 
-### Destroy the Whole Pool
+### Destroying the Pool
+
+To destroy the entire pool and free all associated resources:
 
 ```c
 void xmem_destroy_pool(xmem_pool_handle pool);
 ```
 
-> **Caution!** This function will destroy the whole pool, `free`ing all your memory allocated by that pool, even if you haven't `xmem_free` yet.
+Example:
 
 ```c
-xmem_destroy_pool(pool1);
-xmem_destroy_pool(pool2);
+xmem_destroy_pool(pool);
 ```
 
-### More
+### Additional Functions
 
-You can refer to [xmempool.h](xmempool.h) for any more functions.
+For more detailed information about the API, please refer to the [xmempool.h](xmempool.h) header file.
 
 ## Performance
 
-```shell
-$ npm install
-```
+To run performance tests:
 
-Install dependencies via command above and then type follow command:
+1. Install dependencies:
+   ```
+   npm install
+   ```
 
-```shell
-$ node perf.js
-```
+2. Run the performance script:
+   ```
+   node perf.js
+   ```
 
-The report will be generated at `./perf/report`.
+The performance report will be generated in the `./perf/report` directory.
 
-[Here](http://blog.xcoder.in/xmempool/)'s some my report.
+## Contributing
 
-## Contribute
+Contributions to X Memo Pool are welcome! Feel free to submit pull requests or open issues for bugs, feature requests, or improvements.
 
-You're welcome to pull requests!
+## License
 
-「雖然我覺得不怎麼可能有人會關注我」
-
+X Memo Pool is open-source software. Please refer to the [LICENSE](LICENSE) file for detailed licensing information.

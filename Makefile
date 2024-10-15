@@ -104,3 +104,8 @@ cpplint: .cpplint-stamp
 clean:
 	$(RM) -rf *.o *.d $(DYLIBNAME) $(STLIBDNAME) $(STLIBNAME) $(TESTS) $(TESTS)-d perf/*.o perf_xmem perf_alloc
 
+# Doxygen documentation generation
+docs:
+	doxygen Doxyfile
+
+.PHONY: docs
